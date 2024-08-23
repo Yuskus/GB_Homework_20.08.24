@@ -46,6 +46,7 @@ namespace HomeworkGB10.Repo
             if (category is null)
             {
                 category = _mapper.Map<Category>(categoryDTO);
+                category.Id = 0;
                 context.Categories.Add(category);
                 context.SaveChanges();
                 _cache.Remove("categories");

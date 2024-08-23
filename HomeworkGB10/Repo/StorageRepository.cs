@@ -46,6 +46,7 @@ namespace HomeworkGB10.Repo
             if (storage is null)
             {
                 storage = _mapper.Map<Storage>(storageDTO);
+                storage.Id = 0;
                 context.Storages.Add(storage);
                 context.SaveChanges();
                 _cache.Remove("storages");

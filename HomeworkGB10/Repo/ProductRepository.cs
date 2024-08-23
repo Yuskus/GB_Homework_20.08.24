@@ -45,6 +45,7 @@ namespace HomeworkGB10.Repo
             if (product is null)
             {
                 product = _mapper.Map<Product>(productDTO);
+                product.Id = 0;
                 context.Products.Add(product);
                 context.SaveChanges();
                 _cache.Remove("products");
