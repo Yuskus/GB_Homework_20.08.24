@@ -1,23 +1,24 @@
-﻿using HomeworkGB10.Models;
+﻿using HomeworkGB10.Abstractions;
+using HomeworkGB10.Models.DTO;
+using HomeworkGB10.Repo;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using System.Text;
 
 namespace HomeworkGB10.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class StorageController : ControllerBase
+    public class StorageController(IStorageRepository storageRepository) : ControllerBase
     {
-        [HttpGet(template: "get_storages")] //storage
+        private readonly IStorageRepository _storageRepository = storageRepository;
+
+        [HttpGet(template: "get_storages")] 
         public ActionResult GetStorages()
         {
             try
             {
-                using var context = new StorageContext();
-                var storages = context.Storages.Select(x => new { x.Id, x.ProductId, x.Quantity }).ToList();
-                if (storages is null)
-                {
-                    return StatusCode(404);
-                }
+                var storages = _storageRepository.GetStorages();
                 return Ok(storages);
             }
             catch
@@ -26,25 +27,68 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpPost(template: "post_storage")]
-        public ActionResult AddStorage(int productId, int quantity)
+        [HttpGet(template: "get_storages_csv")] 
+        public ActionResult GetStoragesCsv()
         {
             try
             {
-                using var context = new StorageContext();
-                if (!context.Storages.Any(x => x.ProductId == productId))
-                {
-                    var storage = new Storage()
-                    {
-                        ProductId = productId,
-                        Quantity = quantity
-                    };
-                    context.Storages.Add(storage);
-                    context.SaveChanges();
-                    var result = new { storage.Id, productId, quantity, Status = "Added" };
-                    return Ok(result);
-                }
-                return BadRequest();
+                string result = _storageRepository.GetStoragesCsv();
+                return File(Encoding.UTF8.GetBytes(result), "text/csv", "storages_table.csv");
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet(template: "get_storages_csv_url")]
+        public ActionResult<string> GetCategoriesCsvUrl()
+        {
+            try
+            {
+                var result = _storageRepository.GetStoragesCsv();
+                if (result == null) return StatusCode(404);
+                string fileName = $"storages_table_{DateTime.Now:yyyyMMddHHmmss}.csv";
+                string path = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", fileName);
+                System.IO.File.WriteAllText(path, result);
+                return $"{Request.Scheme}://{Request.Host}/static/{fileName}";
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet(template: "get_cache_statistics")]
+        public ActionResult<MemoryCacheStatistics?> GetCacheStatistics()
+        {
+            return _storageRepository.GetCacheStatistics();
+        }
+
+        [HttpGet(template: "get_cache_statistics_url")]
+        public ActionResult<string> GetCacheStatisticsUrl()
+        {
+            var statistics = _storageRepository.GetCacheStatistics();
+            if (statistics == null) return StatusCode(404);
+            var sb = new StringBuilder();
+            sb.AppendLine("\"Storage\" Table;Cache Statistics");
+            sb.AppendLine($"Current Entry Count;{statistics.CurrentEntryCount}");
+            sb.AppendLine($"Current Estimated Size;{statistics.CurrentEstimatedSize}");
+            sb.AppendLine($"Total Misses;{statistics.TotalMisses}");
+            sb.AppendLine($"Total Hits;{statistics.TotalHits}");
+            string fileName = $"storages_cache_stat_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", fileName);
+            System.IO.File.WriteAllText(path, sb.ToString());
+            return $"{Request.Scheme}://{Request.Host}/static/{fileName}";
+        }
+
+        [HttpPost(template: "post_storage")]
+        public ActionResult AddStorage([FromBody] StorageDTO storageDTO)
+        {
+            try
+            {
+                int resultIndex = _storageRepository.AddStorage(storageDTO);
+                return Ok(resultIndex);
             }
             catch
             {
@@ -53,53 +97,11 @@ namespace HomeworkGB10.Controllers
         }
 
         [HttpPut(template: "put_storage")]
-        public ActionResult PutStorage(int id, int productId, int quantity)
+        public ActionResult PutStorage([FromBody] StorageDTO storageDTO)
         {
             try
             {
-                using var context = new StorageContext();
-                var storage = context.Storages.FirstOrDefault(x => x.Id == id);
-                if (storage is null)
-                {
-                    var createStorage = new Storage()
-                    {
-                        ProductId = productId,
-                        Quantity = quantity
-                    };
-                    context.Storages.Add(createStorage);
-                    context.SaveChanges();
-                    var result = new { createStorage.Id, productId, quantity, Status = "Added" };
-                    return Ok(result);
-                }
-                else
-                {
-                    storage.ProductId = productId;
-                    storage.Quantity = quantity;
-                    context.SaveChanges();
-                    var result = new { storage.Id, productId, quantity, Status = "Changed" };
-                    return Ok(result);
-                }
-            }
-            catch
-            {
-                return StatusCode(500);
-            }
-        }
-
-        [HttpPatch(template: "patch_storage")]
-        public ActionResult UpdateQuantityAtStorage(int id, int quantity)
-        {
-            try
-            {
-                using var context = new StorageContext();
-                var storage = context.Storages.FirstOrDefault(x => x.Id == id);
-                if (storage is null)
-                {
-                    return StatusCode(404);
-                }
-                storage.Quantity = quantity;
-                context.SaveChanges();
-                var result = new { id, quantity, Status = "Changed" };
+                int result = _storageRepository.PutStorage(storageDTO);
                 return Ok(result);
             }
             catch
@@ -108,20 +110,28 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpDelete(template: "delete_storage")]
+        [HttpPatch(template: "patch_storage/{id}")]
+        public ActionResult UpdateQuantityAtStorage(int id, int quantity)
+        {
+            try
+            {
+                int result = _storageRepository.UpdateQuantityAtStorage(id, quantity);
+                if (result < 0) return StatusCode(404);
+                return Ok(result);
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpDelete(template: "delete_storage/{id}")]
         public ActionResult DeleteStorage(int id)
         {
             try
             {
-                using var context = new StorageContext();
-                var storage = context.Storages.FirstOrDefault(x => x.Id == id);
-                if (storage is null)
-                {
-                    return StatusCode(404);
-                }
-                var result = new { storage.Id, storage.ProductId, storage.Quantity, Status = "Deleted" };
-                context.Storages.Remove(storage);
-                context.SaveChanges();
+                int result = _storageRepository.DeleteStorage(id);
+                if (result < 0) return StatusCode(404);
                 return Ok(result);
             }
             catch

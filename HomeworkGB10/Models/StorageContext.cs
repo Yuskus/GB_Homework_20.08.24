@@ -2,15 +2,16 @@
 
 namespace HomeworkGB10.Models
 {
-    public class StorageContext : DbContext
+    public class StorageContext(string connectionString) : DbContext
     {
+        private readonly string _connectionString = connectionString;
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Storage> Storages { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseLazyLoadingProxies().UseNpgsql("Host=localhost;Username=postgres;Password=22011995;Database=StorageDb");
+            optionsBuilder.UseLazyLoadingProxies().UseNpgsql(_connectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

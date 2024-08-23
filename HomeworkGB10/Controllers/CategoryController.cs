@@ -1,24 +1,25 @@
-﻿using HomeworkGB10.Models;
+﻿using HomeworkGB10.Abstractions;
+using HomeworkGB10.Models.DTO;
+using HomeworkGB10.Repo;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using System.Text;
 
 namespace HomeworkGB10.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CategoryController : ControllerBase
+    public class CategoryController(ICategoryRepository categoryRepository) : ControllerBase
     {
+        private readonly ICategoryRepository _categoryRepository = categoryRepository;
+
         [HttpGet(template: "get_categories")]
         public ActionResult GetCategories()
         {
             try
             {
-                using var context = new StorageContext();
-                var categories = context.Categories.Select(x => new {x.Id, x.Name}).ToList();
-                if (categories is null)
-                {
-                    return StatusCode(404);
-                }
-                return Ok(categories);
+                var result = _categoryRepository.GetCategories();
+                return Ok(result);
             }
             catch
             {
@@ -26,21 +27,68 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpPost(template: "post_category")]
-        public ActionResult AddCategory(string name)
+        [HttpGet(template: "get_categories_csv")]
+        public ActionResult GetCategoriesCsv()
         {
             try
             {
-                using var context = new StorageContext();
-                if (!context.Categories.Any(x => x.Name == name))
-                {
-                    var category = new Category() { Name = name };
-                    context.Categories.Add(category);
-                    context.SaveChanges();
-                    var result = new { category.Id, name, Status = "Added" };
-                    return Ok(result);
-                }
-                return BadRequest();
+                var result = _categoryRepository.GetCategoriesCsv();
+                return File(Encoding.UTF8.GetBytes(result), "text/csv", "category_table.csv");
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet(template: "get_categories_csv_url")]
+        public ActionResult<string> GetCategoriesCsvUrl()
+        {
+            try
+            {
+                var result = _categoryRepository.GetCategoriesCsv();
+                if (result == null) return StatusCode(404);
+                string fileName = $"categories_table_{DateTime.Now:yyyyMMddHHmmss}.csv";
+                string path = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", fileName);
+                System.IO.File.WriteAllText(path, result);
+                return $"{Request.Scheme}://{Request.Host}/static/{fileName}";
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet(template: "get_cache_statistics")]
+        public ActionResult<MemoryCacheStatistics?> GetCacheStatistics()
+        {
+            return _categoryRepository.GetCacheStatistics();
+        }
+
+        [HttpGet(template: "get_cache_statistics_url")]
+        public ActionResult<string> GetCacheStatisticsUrl()
+        {
+            var statistics = _categoryRepository.GetCacheStatistics();
+            if (statistics == null) return StatusCode(404);
+            var sb = new StringBuilder();
+            sb.AppendLine("\"Category\" Table;Cache Statistics");
+            sb.AppendLine($"Current Entry Count;{statistics.CurrentEntryCount}");
+            sb.AppendLine($"Current Estimated Size;{statistics.CurrentEstimatedSize}");
+            sb.AppendLine($"Total Misses;{statistics.TotalMisses}");
+            sb.AppendLine($"Total Hits;{statistics.TotalHits}");
+            string fileName = $"categories_cache_stat_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", fileName);
+            System.IO.File.WriteAllText(path, sb.ToString());
+            return $"{Request.Scheme}://{Request.Host}/static/{fileName}";
+        }
+
+        [HttpPost(template: "post_category")]
+        public ActionResult AddCategory([FromBody] CategoryDTO categoryDTO)
+        {
+            try
+            {
+                int result = _categoryRepository.AddCategory(categoryDTO);
+                return Ok(result);
             }
             catch
             {
@@ -48,27 +96,12 @@ namespace HomeworkGB10.Controllers
             }
         }
         [HttpPut(template: "put_category")]
-        public ActionResult PutCategory(int id, string name)
+        public ActionResult PutCategory([FromBody] CategoryDTO categoryDTO)
         {
             try
             {
-                using var context = new StorageContext();
-                var category = context.Categories.FirstOrDefault(x => x.Id == id);
-                if (category is null)
-                {
-                    var createCategory = new Category() { Name = name };
-                    context.Categories.Add(createCategory);
-                    context.SaveChanges();
-                    var result = new { createCategory.Id, createCategory.Name, Status = "Added" };
-                    return Ok(result);
-                }
-                else
-                {
-                    category.Name = name;
-                    context.SaveChanges();
-                    var result = new { category.Id, category.Name, Status = "Changed" };
-                    return Ok(result);
-                }
+                int result = _categoryRepository.PutCategory(categoryDTO);
+                return Ok(result);
             }
             catch
             {
@@ -76,20 +109,13 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpDelete(template: "delete_category")]
+        [HttpDelete(template: "delete_category/{id}")]
         public ActionResult DeleteCategory(int id)
         {
             try
             {
-                using var context = new StorageContext();
-                var category = context.Categories.FirstOrDefault(x => x.Id == id);
-                if (category is null)
-                {
-                    return StatusCode(404);
-                }
-                var result = new { category.Id, category.Name, Status = "Deleted" };
-                context.Categories.Remove(category);
-                context.SaveChanges();
+                int result = _categoryRepository.DeleteCategory(id);
+                if (result < 0) return StatusCode(404);
                 return Ok(result);
             }
             catch
