@@ -13,23 +13,21 @@ namespace HomeworkGB10.Repo
         private readonly IMemoryCache _cache = cache;
         private readonly string _connect = root.GetConnectionString("StoreDb")!;
 
-        public MemoryCacheStatistics? GetCacheStatistics() => _cache.GetCurrentStatistics();
-
-        public List<StorageDTO> GetStorages()
+        public List<GetStorageDTO> GetStorages()
         {
-            if (_cache.TryGetValue("storages", out List<StorageDTO>? storages))
+            if (_cache.TryGetValue("storages", out List<GetStorageDTO>? storages))
             {
                 if (storages != null) return storages;
             }
             using var context = new StorageContext(_connect);
-            var result = context.Storages.Select(x => _mapper.Map<StorageDTO>(x)).ToList();
+            var result = context.Storages.Select(x => _mapper.Map<GetStorageDTO>(x)).ToList();
             _cache.Set("storages", storages, TimeSpan.FromMinutes(30));
             return result;
         }
 
         public string GetStoragesCsv()
         {
-            List<StorageDTO> storages = GetStorages();
+            List<GetStorageDTO> storages = GetStorages();
             var sb = new StringBuilder();
             sb.AppendLine($"ID;Product ID;Quantity");
             for (int i = 0; i < storages.Count; i++)
@@ -39,14 +37,44 @@ namespace HomeworkGB10.Repo
             return sb.ToString();
         }
 
-        public int AddStorage(StorageDTO storageDTO)
+        public string GetStoragesCsvUrl()
+        {
+            var result = GetStoragesCsv();
+            if (result == null) return string.Empty;
+            string fileName = $"storages_table_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", fileName);
+            File.WriteAllText(path, result);
+            return fileName;
+        }
+
+        public MemoryCacheStatistics? GetCacheStatistics()
+        {
+            return _cache.GetCurrentStatistics();
+        }
+
+        public string GetCacheStatisticsCsvUrl()
+        {
+            var statistics = GetCacheStatistics();
+            if (statistics == null) return string.Empty;
+            var sb = new StringBuilder();
+            sb.AppendLine("\"Storage\" Table;Cache Statistics");
+            sb.AppendLine($"Current Entry Count;{statistics.CurrentEntryCount}");
+            sb.AppendLine($"Current Estimated Size;{statistics.CurrentEstimatedSize}");
+            sb.AppendLine($"Total Misses;{statistics.TotalMisses}");
+            sb.AppendLine($"Total Hits;{statistics.TotalHits}");
+            string fileName = $"storages_cache_stat_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", fileName);
+            File.WriteAllText(path, sb.ToString());
+            return fileName;
+        }
+
+        public int AddStorage(PutStorageDTO storageDTO)
         {
             using var context = new StorageContext(_connect);
             var storage = context.Storages.FirstOrDefault(x => x.ProductId == storageDTO.ProductId);
             if (storage is null)
             {
                 storage = _mapper.Map<Storage>(storageDTO);
-                storage.Id = 0;
                 context.Storages.Add(storage);
                 context.SaveChanges();
                 _cache.Remove("storages");
@@ -54,10 +82,10 @@ namespace HomeworkGB10.Repo
             return storage.Id;
         }
 
-        public int PutStorage(StorageDTO storageDTO)
+        public int PutStorage(PutStorageDTO storageDTO)
         {
             using var context = new StorageContext(_connect);
-            var storage = context.Storages.FirstOrDefault(x => x.Id == storageDTO.Id);
+            var storage = context.Storages.FirstOrDefault(x => x.ProductId == storageDTO.ProductId);
             if (storage is null)
             {
                 storage = _mapper.Map<Storage>(storageDTO);
@@ -65,8 +93,6 @@ namespace HomeworkGB10.Repo
             }
             else
             {
-                storage.Id = storageDTO.Id;
-                storage.ProductId = storageDTO.ProductId;
                 storage.Quantity = storageDTO.Quantity;
             }
             context.SaveChanges();

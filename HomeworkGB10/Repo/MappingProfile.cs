@@ -8,9 +8,13 @@ namespace HomeworkGB10.Repo
     {
         public MappingProfile()
         {
-            CreateMap<Category, CategoryDTO>(MemberList.Destination).ReverseMap();
-            CreateMap<Product, ProductDTO>(MemberList.Destination).ReverseMap();
-            CreateMap<Storage, StorageDTO>(MemberList.Destination).ReverseMap();
+            CreateMap<Category, GetCategoryDTO>(MemberList.Destination).ReverseMap();
+            CreateMap<Product, GetProductDTO>(MemberList.Destination).ReverseMap();
+            CreateMap<Storage, GetStorageDTO>(MemberList.Destination).ReverseMap();
+
+            CreateMap<Category, PutCategoryDTO>(MemberList.Destination).ReverseMap();
+            CreateMap<Product, PutProductDTO>(MemberList.Destination).ReverseMap();
+            CreateMap<Storage, PutStorageDTO>(MemberList.Destination).ReverseMap();
         }
     }
 }

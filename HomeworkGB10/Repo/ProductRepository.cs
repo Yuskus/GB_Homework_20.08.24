@@ -13,23 +13,21 @@ namespace HomeworkGB10.Repo
         private readonly IMemoryCache _cache = cache;
         private readonly string _connect = root.GetConnectionString("StoreDb")!;
 
-        public MemoryCacheStatistics? GetCacheStatistics() => _cache.GetCurrentStatistics();
-
-        public List<ProductDTO> GetProducts()
+        public List<GetProductDTO> GetProducts()
         {
-            if (_cache.TryGetValue("products", out List<ProductDTO>? products))
+            if (_cache.TryGetValue("products", out List<GetProductDTO>? products))
             {
                 if (products is not null) return products;
             }
             using var context = new StorageContext(_connect);
-            var result = context.Products.Select(x => _mapper.Map<ProductDTO>(x)).ToList();
+            var result = context.Products.Select(x => _mapper.Map<GetProductDTO>(x)).ToList();
             _cache.Set("products", products, TimeSpan.FromMinutes(30));
             return result;
         }
 
         public string GetProductsCsv()
         {
-            List<ProductDTO> products = GetProducts();
+            List<GetProductDTO> products = GetProducts();
             var sb = new StringBuilder();
             sb.AppendLine($"ID;Name;Description;Price;Category ID");
             for (int i = 0; i < products.Count; i++)
@@ -38,14 +36,44 @@ namespace HomeworkGB10.Repo
             }
             return sb.ToString();
         }
-        public int AddProduct(ProductDTO productDTO)
+
+        public string GetProductsCsvUrl()
+        {
+            var result = GetProductsCsv();
+            if (result is null) return string.Empty;
+            string fileName = $"products_table_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", fileName);
+            File.WriteAllText(path, result);
+            return fileName;
+        }
+        public MemoryCacheStatistics? GetCacheStatistics()
+        {
+            return _cache.GetCurrentStatistics();
+        }
+
+        public string GetCacheStatisticsCsvUrl()
+        {
+            var statistics = GetCacheStatistics();
+            if (statistics == null) return string.Empty;
+            var sb = new StringBuilder();
+            sb.AppendLine("\"Product\" Table;Cache Statistics");
+            sb.AppendLine($"Current Entry Count;{statistics.CurrentEntryCount}");
+            sb.AppendLine($"Current Estimated Size;{statistics.CurrentEstimatedSize}");
+            sb.AppendLine($"Total Misses;{statistics.TotalMisses}");
+            sb.AppendLine($"Total Hits;{statistics.TotalHits}");
+            string fileName = $"storages_cache_stat_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", fileName);
+            File.WriteAllText(path, sb.ToString());
+            return fileName;
+        }
+
+        public int AddProduct(PutProductDTO productDTO)
         {
             using var context = new StorageContext(_connect);
             var product = context.Products.FirstOrDefault(x => x.Name == productDTO.Name);
             if (product is null)
             {
                 product = _mapper.Map<Product>(productDTO);
-                product.Id = 0;
                 context.Products.Add(product);
                 context.SaveChanges();
                 _cache.Remove("products");
@@ -53,10 +81,10 @@ namespace HomeworkGB10.Repo
             return product.Id;
         }
 
-        public int PutProduct(ProductDTO productDTO)
+        public int PutProduct(PutProductDTO productDTO)
         {
             using var context = new StorageContext(_connect);
-            var product = context.Products.FirstOrDefault(x => x.Id == productDTO.Id);
+            var product = context.Products.FirstOrDefault(x => x.Name == productDTO.Name);
             if (product is null)
             {
                 product = _mapper.Map<Product>(productDTO);
@@ -64,8 +92,6 @@ namespace HomeworkGB10.Repo
             }
             else
             {
-                product.Id = productDTO.Id;
-                product.Name = productDTO.Name;
                 product.Description = productDTO.Description;
                 product.Price = productDTO.Price;
                 product.CategoryId = productDTO.CategoryId;

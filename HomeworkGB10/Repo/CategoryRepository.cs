@@ -13,23 +13,21 @@ namespace HomeworkGB10.Repo
         private readonly IMemoryCache _cache = cache;
         private readonly string _connect = root.GetConnectionString("StoreDb")!;
 
-        public MemoryCacheStatistics? GetCacheStatistics() => _cache.GetCurrentStatistics();
-
-        public List<CategoryDTO> GetCategories()
+        public List<GetCategoryDTO> GetCategories()
         {
-            if (_cache.TryGetValue("categories", out List<CategoryDTO>? categories))
+            if (_cache.TryGetValue("categories", out List<GetCategoryDTO>? categories))
             {
                 if (categories != null) return categories;
             }
             using var context = new StorageContext(_connect);
-            var result = context.Categories.Select(x => _mapper.Map<CategoryDTO>(x)).ToList();
+            var result = context.Categories.Select(x => _mapper.Map<GetCategoryDTO>(x)).ToList();
             _cache.Set("categories", result, TimeSpan.FromMinutes(30));
             return result;
         }
 
         public string GetCategoriesCsv()
         {
-            List<CategoryDTO> categories = GetCategories();
+            List<GetCategoryDTO> categories = GetCategories();
             var sb = new StringBuilder();
             sb.AppendLine($"ID;Name");
             for (int i = 0; i < categories.Count; i++)
@@ -39,34 +37,56 @@ namespace HomeworkGB10.Repo
             return sb.ToString();
         }
 
-        public int AddCategory(CategoryDTO categoryDTO)
+        public string GetCategoriesCsvUrl()
+        {
+            var result = GetCategoriesCsv();
+            if (result is null) return string.Empty;
+            string fileName = $"categories_table_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", fileName);
+            File.WriteAllText(path, result);
+            return fileName;
+        }
+
+        public MemoryCacheStatistics? GetCacheStatistics()
+        {
+            return _cache.GetCurrentStatistics();
+        }
+
+        public string GetCacheStatisticsCsvUrl()
+        {
+            var statistics = GetCacheStatistics();
+            if (statistics == null) return string.Empty;
+            var sb = new StringBuilder();
+            sb.AppendLine("\"Category\" Table;Cache Statistics");
+            sb.AppendLine($"Current Entry Count;{statistics.CurrentEntryCount}");
+            sb.AppendLine($"Current Estimated Size;{statistics.CurrentEstimatedSize}");
+            sb.AppendLine($"Total Misses;{statistics.TotalMisses}");
+            sb.AppendLine($"Total Hits;{statistics.TotalHits}");
+            string fileName = $"categories_cache_stat_{DateTime.Now:yyyyMMddHHmmss}.csv";
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", fileName);
+            File.WriteAllText(path, sb.ToString());
+            return fileName;
+        }
+
+        public int AddCategory(PutCategoryDTO categoryDTO)
         {
             using var context = new StorageContext(_connect);
             var category = context.Categories.FirstOrDefault(x => x.Name == categoryDTO.Name);
             if (category is null)
             {
                 category = _mapper.Map<Category>(categoryDTO);
-                category.Id = 0;
                 context.Categories.Add(category);
                 context.SaveChanges();
                 _cache.Remove("categories");
             }
             return category.Id;
         }
-        public int PutCategory(CategoryDTO categoryDTO)
+        public int UpdateCategory(int id, string name)
         {
             using var context = new StorageContext(_connect);
-            var category = context.Categories.FirstOrDefault(x => x.Id == categoryDTO.Id);
-            if (category is null)
-            {
-                category = _mapper.Map<Category>(categoryDTO);
-                context.Categories.Add(category);
-            }
-            else
-            {
-                category.Id = categoryDTO.Id;
-                category.Name = categoryDTO.Name;
-            }
+            var category = context.Categories.FirstOrDefault(x => x.Id == id);
+            if (category is null) return -1;
+            category.Name = name;
             context.SaveChanges();
             _cache.Remove("categories");
             return category.Id;

@@ -13,7 +13,7 @@ namespace HomeworkGB10.Controllers
         private readonly IProductRepository _productRepository = productRepository;
 
         [HttpGet(template: "get_products")]
-        public ActionResult GetProducts()
+        public ActionResult<List<GetProductDTO>> GetProducts()
         {
             try
             {
@@ -31,7 +31,7 @@ namespace HomeworkGB10.Controllers
         {
             try
             {
-                var result = _productRepository.GetProductsCsv();
+                string result = _productRepository.GetProductsCsv();
                 return File(Encoding.UTF8.GetBytes(result), "text/csv", "products_table.csv");
             }
             catch
@@ -45,11 +45,8 @@ namespace HomeworkGB10.Controllers
         {
             try
             {
-                var result = _productRepository.GetProductsCsv();
-                if (result == null) return StatusCode(404);
-                string fileName = $"products_table_{DateTime.Now:yyyyMMddHHmmss}.csv";
-                string path = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", fileName);
-                System.IO.File.WriteAllText(path, result);
+                string fileName = _productRepository.GetProductsCsvUrl();
+                if (fileName == string.Empty) return StatusCode(404);
                 return $"{Request.Scheme}://{Request.Host}/static/{fileName}";
             }
             catch
@@ -67,22 +64,13 @@ namespace HomeworkGB10.Controllers
         [HttpGet(template: "get_cache_statistics_url")]
         public ActionResult<string> GetCacheStatisticsUrl()
         {
-            var statistics = _productRepository.GetCacheStatistics();
-            if (statistics == null) return StatusCode(404);
-            var sb = new StringBuilder();
-            sb.AppendLine("\"Product\" Table;Cache Statistics");
-            sb.AppendLine($"Current Entry Count;{statistics.CurrentEntryCount}");
-            sb.AppendLine($"Current Estimated Size;{statistics.CurrentEstimatedSize}");
-            sb.AppendLine($"Total Misses;{statistics.TotalMisses}");
-            sb.AppendLine($"Total Hits;{statistics.TotalHits}");
-            string fileName = $"storages_cache_stat_{DateTime.Now:yyyyMMddHHmmss}.csv";
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", fileName);
-            System.IO.File.WriteAllText(path, sb.ToString());
+            string fileName = _productRepository.GetCacheStatisticsCsvUrl();
+            if (fileName == string.Empty) return StatusCode(404);
             return $"{Request.Scheme}://{Request.Host}/static/{fileName}";
         }
 
         [HttpPost(template: "post_product")]
-        public ActionResult AddProduct([FromBody] ProductDTO productDTO)
+        public ActionResult<int> AddProduct([FromBody] PutProductDTO productDTO)
         {
             try
             {
@@ -96,7 +84,7 @@ namespace HomeworkGB10.Controllers
         }
 
         [HttpPut(template: "put_product")]
-        public ActionResult PutProduct([FromBody] ProductDTO productDTO)
+        public ActionResult<int> PutProduct([FromBody] PutProductDTO productDTO)
         {
             try
             {
@@ -110,7 +98,7 @@ namespace HomeworkGB10.Controllers
         }
 
         [HttpPatch(template: "patch_product/{id}")]
-        public ActionResult UpdatePriceOfProduct(int id, double price)
+        public ActionResult<int> UpdatePriceOfProduct(int id, double price)
         {
             try
             {
@@ -125,7 +113,7 @@ namespace HomeworkGB10.Controllers
         }
 
         [HttpDelete(template: "delete_product/{id}")]
-        public ActionResult DeleteProduct(int id)
+        public ActionResult<int> DeleteProduct(int id)
         {
             try
             {

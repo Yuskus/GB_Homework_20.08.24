@@ -1,6 +1,5 @@
 ﻿using HomeworkGB10.Abstractions;
 using HomeworkGB10.Models.DTO;
-using HomeworkGB10.Repo;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System.Text;
@@ -14,7 +13,7 @@ namespace HomeworkGB10.Controllers
         private readonly IStorageRepository _storageRepository = storageRepository;
 
         [HttpGet(template: "get_storages")] 
-        public ActionResult GetStorages()
+        public ActionResult<List<GetStorageDTO>> GetStorages()
         {
             try
             {
@@ -46,11 +45,8 @@ namespace HomeworkGB10.Controllers
         {
             try
             {
-                var result = _storageRepository.GetStoragesCsv();
-                if (result == null) return StatusCode(404);
-                string fileName = $"storages_table_{DateTime.Now:yyyyMMddHHmmss}.csv";
-                string path = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", fileName);
-                System.IO.File.WriteAllText(path, result);
+                string fileName = _storageRepository.GetStoragesCsvUrl();
+                if (fileName == string.Empty) return StatusCode(404);
                 return $"{Request.Scheme}://{Request.Host}/static/{fileName}";
             }
             catch
@@ -68,22 +64,13 @@ namespace HomeworkGB10.Controllers
         [HttpGet(template: "get_cache_statistics_url")]
         public ActionResult<string> GetCacheStatisticsUrl()
         {
-            var statistics = _storageRepository.GetCacheStatistics();
-            if (statistics == null) return StatusCode(404);
-            var sb = new StringBuilder();
-            sb.AppendLine("\"Storage\" Table;Cache Statistics");
-            sb.AppendLine($"Current Entry Count;{statistics.CurrentEntryCount}");
-            sb.AppendLine($"Current Estimated Size;{statistics.CurrentEstimatedSize}");
-            sb.AppendLine($"Total Misses;{statistics.TotalMisses}");
-            sb.AppendLine($"Total Hits;{statistics.TotalHits}");
-            string fileName = $"storages_cache_stat_{DateTime.Now:yyyyMMddHHmmss}.csv";
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", fileName);
-            System.IO.File.WriteAllText(path, sb.ToString());
+            string fileName = _storageRepository.GetCacheStatisticsCsvUrl();
+            if (fileName == string.Empty) return StatusCode(404);
             return $"{Request.Scheme}://{Request.Host}/static/{fileName}";
         }
 
         [HttpPost(template: "post_storage")]
-        public ActionResult AddStorage([FromBody] StorageDTO storageDTO)
+        public ActionResult<int> AddStorage([FromBody] PutStorageDTO storageDTO)
         {
             try
             {
@@ -97,7 +84,7 @@ namespace HomeworkGB10.Controllers
         }
 
         [HttpPut(template: "put_storage")]
-        public ActionResult PutStorage([FromBody] StorageDTO storageDTO)
+        public ActionResult<int> PutStorage([FromBody] PutStorageDTO storageDTO)
         {
             try
             {
@@ -111,7 +98,7 @@ namespace HomeworkGB10.Controllers
         }
 
         [HttpPatch(template: "patch_storage/{id}")]
-        public ActionResult UpdateQuantityAtStorage(int id, int quantity)
+        public ActionResult<int> UpdateQuantityAtStorage(int id, int quantity)
         {
             try
             {
@@ -126,7 +113,7 @@ namespace HomeworkGB10.Controllers
         }
 
         [HttpDelete(template: "delete_storage/{id}")]
-        public ActionResult DeleteStorage(int id)
+        public ActionResult<int> DeleteStorage(int id)
         {
             try
             {

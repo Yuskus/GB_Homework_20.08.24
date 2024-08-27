@@ -4,10 +4,11 @@ namespace HomeworkGB10.Abstractions
 {
     public interface IStorageRepository : IRepository
     {
-        public List<StorageDTO> GetStorages();
+        public List<GetStorageDTO> GetStorages();
         public string GetStoragesCsv();
-        public int AddStorage(StorageDTO storage);
-        public int PutStorage(StorageDTO storage);
+        public string GetStoragesCsvUrl();
+        public int AddStorage(PutStorageDTO storage);
+        public int PutStorage(PutStorageDTO storage);
         public int UpdateQuantityAtStorage(int id, int quantity);
         public int DeleteStorage(int id);
     }

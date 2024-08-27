@@ -1,6 +1,5 @@
 ﻿using HomeworkGB10.Abstractions;
 using HomeworkGB10.Models.DTO;
-using HomeworkGB10.Repo;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System.Text;
@@ -14,7 +13,7 @@ namespace HomeworkGB10.Controllers
         private readonly ICategoryRepository _categoryRepository = categoryRepository;
 
         [HttpGet(template: "get_categories")]
-        public ActionResult GetCategories()
+        public ActionResult<List<GetCategoryDTO>> GetCategories()
         {
             try
             {
@@ -46,11 +45,8 @@ namespace HomeworkGB10.Controllers
         {
             try
             {
-                var result = _categoryRepository.GetCategoriesCsv();
-                if (result == null) return StatusCode(404);
-                string fileName = $"categories_table_{DateTime.Now:yyyyMMddHHmmss}.csv";
-                string path = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", fileName);
-                System.IO.File.WriteAllText(path, result);
+                string fileName = _categoryRepository.GetCategoriesCsvUrl();
+                if (fileName == string.Empty) return StatusCode(404);
                 return $"{Request.Scheme}://{Request.Host}/static/{fileName}";
             }
             catch
@@ -68,22 +64,13 @@ namespace HomeworkGB10.Controllers
         [HttpGet(template: "get_cache_statistics_url")]
         public ActionResult<string> GetCacheStatisticsUrl()
         {
-            var statistics = _categoryRepository.GetCacheStatistics();
-            if (statistics == null) return StatusCode(404);
-            var sb = new StringBuilder();
-            sb.AppendLine("\"Category\" Table;Cache Statistics");
-            sb.AppendLine($"Current Entry Count;{statistics.CurrentEntryCount}");
-            sb.AppendLine($"Current Estimated Size;{statistics.CurrentEstimatedSize}");
-            sb.AppendLine($"Total Misses;{statistics.TotalMisses}");
-            sb.AppendLine($"Total Hits;{statistics.TotalHits}");
-            string fileName = $"categories_cache_stat_{DateTime.Now:yyyyMMddHHmmss}.csv";
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles", fileName);
-            System.IO.File.WriteAllText(path, sb.ToString());
+            string fileName = _categoryRepository.GetCacheStatisticsCsvUrl();
+            if (fileName == string.Empty) return StatusCode(404);
             return $"{Request.Scheme}://{Request.Host}/static/{fileName}";
         }
 
         [HttpPost(template: "post_category")]
-        public ActionResult AddCategory([FromBody] CategoryDTO categoryDTO)
+        public ActionResult<int> AddCategory([FromBody] PutCategoryDTO categoryDTO)
         {
             try
             {
@@ -95,12 +82,13 @@ namespace HomeworkGB10.Controllers
                 return StatusCode(500);
             }
         }
-        [HttpPut(template: "put_category")]
-        public ActionResult PutCategory([FromBody] CategoryDTO categoryDTO)
+        [HttpPatch(template: "put_category/{id}")]
+        public ActionResult<int> UpdateCategory(int id, string name)
         {
             try
             {
-                int result = _categoryRepository.PutCategory(categoryDTO);
+                int result = _categoryRepository.UpdateCategory(id, name);
+                if (result < 0) return StatusCode(404);
                 return Ok(result);
             }
             catch
@@ -110,7 +98,7 @@ namespace HomeworkGB10.Controllers
         }
 
         [HttpDelete(template: "delete_category/{id}")]
-        public ActionResult DeleteCategory(int id)
+        public ActionResult<int> DeleteCategory(int id)
         {
             try
             {

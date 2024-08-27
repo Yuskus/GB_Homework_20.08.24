@@ -4,10 +4,11 @@ namespace HomeworkGB10.Abstractions
 {
     public interface ICategoryRepository : IRepository
     {
-        public List<CategoryDTO> GetCategories();
+        public List<GetCategoryDTO> GetCategories();
         public string GetCategoriesCsv();
-        public int AddCategory(CategoryDTO category);
-        public int PutCategory(CategoryDTO categoryDTO);
+        public string GetCategoriesCsvUrl();
+        public int AddCategory(PutCategoryDTO category);
+        public int UpdateCategory(int id, string name);
         public int DeleteCategory(int id);
     }
 }

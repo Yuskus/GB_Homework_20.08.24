@@ -4,10 +4,11 @@ namespace HomeworkGB10.Abstractions
 {
     public interface IProductRepository : IRepository
     {
-        public List<ProductDTO> GetProducts();
+        public List<GetProductDTO> GetProducts();
         public string GetProductsCsv();
-        public int AddProduct(ProductDTO productDTO);
-        public int PutProduct(ProductDTO productDTO);
+        public string GetProductsCsvUrl();
+        public int AddProduct(PutProductDTO productDTO);
+        public int PutProduct(PutProductDTO productDTO);
         public int UpdatePriceOfProduct(int id, double price);
         public int DeleteProduct(int id);
     }
