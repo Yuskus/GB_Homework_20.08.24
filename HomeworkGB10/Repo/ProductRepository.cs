@@ -7,11 +7,11 @@ using System.Text;
 
 namespace HomeworkGB10.Repo
 {
-    public class ProductRepository(IMapper mapper, IMemoryCache cache, IConfigurationRoot root) : IProductRepository
+    public class ProductRepository(IMapper mapper, IMemoryCache cache, IStorageDbContext storageContext) : IProductRepository
     {
         private readonly IMapper _mapper = mapper;
         private readonly IMemoryCache _cache = cache;
-        private readonly string _connect = root.GetConnectionString("StoreDb")!;
+        private readonly IStorageDbContext _storageContext = storageContext;
 
         public List<GetProductDTO> GetProducts()
         {
@@ -19,8 +19,7 @@ namespace HomeworkGB10.Repo
             {
                 if (products is not null) return products;
             }
-            using var context = new StorageContext(_connect);
-            var result = context.Products.Select(x => _mapper.Map<GetProductDTO>(x)).ToList();
+            var result = _storageContext.Products.Select(x => _mapper.Map<GetProductDTO>(x)).ToList();
             _cache.Set("products", products, TimeSpan.FromMinutes(30));
             return result;
         }
@@ -69,13 +68,12 @@ namespace HomeworkGB10.Repo
 
         public int AddProduct(PutProductDTO productDTO)
         {
-            using var context = new StorageContext(_connect);
-            var product = context.Products.FirstOrDefault(x => x.Name == productDTO.Name);
+            var product = _storageContext.Products.FirstOrDefault(x => x.Name == productDTO.Name);
             if (product is null)
             {
                 product = _mapper.Map<Product>(productDTO);
-                context.Products.Add(product);
-                context.SaveChanges();
+                _storageContext.Products.Add(product);
+                _storageContext.SaveChanges();
                 _cache.Remove("products");
             }
             return product.Id;
@@ -83,12 +81,11 @@ namespace HomeworkGB10.Repo
 
         public int PutProduct(PutProductDTO productDTO)
         {
-            using var context = new StorageContext(_connect);
-            var product = context.Products.FirstOrDefault(x => x.Name == productDTO.Name);
+            var product = _storageContext.Products.FirstOrDefault(x => x.Name == productDTO.Name);
             if (product is null)
             {
                 product = _mapper.Map<Product>(productDTO);
-                context.Products.Add(product);
+                _storageContext.Products.Add(product);
             }
             else
             {
@@ -96,29 +93,27 @@ namespace HomeworkGB10.Repo
                 product.Price = productDTO.Price;
                 product.CategoryId = productDTO.CategoryId;
             }
-            context.SaveChanges();
+            _storageContext.SaveChanges();
             _cache.Remove("products");
             return product.Id;
         }
 
         public int UpdatePriceOfProduct(int id, double price)
         {
-            using var context = new StorageContext(_connect);
-            var product = context.Products.FirstOrDefault(x => x.Id == id);
+            var product = _storageContext.Products.FirstOrDefault(x => x.Id == id);
             if (product is null) return -1;
             product.Price = price;
-            context.SaveChanges();
+            _storageContext.SaveChanges();
             _cache.Remove("products");
             return product.Id;
         }
 
         public int DeleteProduct(int id)
         {
-            using var context = new StorageContext(_connect);
-            var product = context.Products.FirstOrDefault(x => x.Id == id);
+            var product = _storageContext.Products.FirstOrDefault(x => x.Id == id);
             if (product is null) return -1;
-            context.Products.Remove(product);
-            context.SaveChanges();
+            _storageContext.Products.Remove(product);
+            _storageContext.SaveChanges();
             _cache.Remove("products");
             return id;
         }

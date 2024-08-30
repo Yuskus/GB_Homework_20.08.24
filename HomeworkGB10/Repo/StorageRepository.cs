@@ -7,11 +7,11 @@ using System.Text;
 
 namespace HomeworkGB10.Repo
 {
-    public class StorageRepository(IMapper mapper, IMemoryCache cache, IConfigurationRoot root) : IStorageRepository
+    public class StorageRepository(IMapper mapper, IMemoryCache cache, IStorageDbContext storageContext) : IStorageRepository
     {
         private readonly IMapper _mapper = mapper;
         private readonly IMemoryCache _cache = cache;
-        private readonly string _connect = root.GetConnectionString("StoreDb")!;
+        private readonly IStorageDbContext _storageContext = storageContext;
 
         public List<GetStorageDTO> GetStorages()
         {
@@ -19,8 +19,7 @@ namespace HomeworkGB10.Repo
             {
                 if (storages != null) return storages;
             }
-            using var context = new StorageContext(_connect);
-            var result = context.Storages.Select(x => _mapper.Map<GetStorageDTO>(x)).ToList();
+            var result = _storageContext.Storages.Select(x => _mapper.Map<GetStorageDTO>(x)).ToList();
             _cache.Set("storages", storages, TimeSpan.FromMinutes(30));
             return result;
         }
@@ -70,13 +69,12 @@ namespace HomeworkGB10.Repo
 
         public int AddStorage(PutStorageDTO storageDTO)
         {
-            using var context = new StorageContext(_connect);
-            var storage = context.Storages.FirstOrDefault(x => x.ProductId == storageDTO.ProductId);
+            var storage = _storageContext.Storages.FirstOrDefault(x => x.ProductId == storageDTO.ProductId);
             if (storage is null)
             {
                 storage = _mapper.Map<Storage>(storageDTO);
-                context.Storages.Add(storage);
-                context.SaveChanges();
+                _storageContext.Storages.Add(storage);
+                _storageContext.SaveChanges();
                 _cache.Remove("storages");
             }
             return storage.Id;
@@ -84,40 +82,37 @@ namespace HomeworkGB10.Repo
 
         public int PutStorage(PutStorageDTO storageDTO)
         {
-            using var context = new StorageContext(_connect);
-            var storage = context.Storages.FirstOrDefault(x => x.ProductId == storageDTO.ProductId);
+            var storage = _storageContext.Storages.FirstOrDefault(x => x.ProductId == storageDTO.ProductId);
             if (storage is null)
             {
                 storage = _mapper.Map<Storage>(storageDTO);
-                context.Storages.Add(storage);
+                _storageContext.Storages.Add(storage);
             }
             else
             {
                 storage.Quantity = storageDTO.Quantity;
             }
-            context.SaveChanges();
+            _storageContext.SaveChanges();
             _cache.Remove("storages");
             return storage.Id;
         }
 
         public int UpdateQuantityAtStorage(int id, int quantity)
         {
-            using var context = new StorageContext(_connect);
-            var storage = context.Storages.FirstOrDefault(x => x.Id == id);
+            var storage = _storageContext.Storages.FirstOrDefault(x => x.Id == id);
             if (storage is null) return -1;
             storage.Quantity = quantity;
-            context.SaveChanges();
+            _storageContext.SaveChanges();
             _cache.Remove("storages");
             return id;
         }
 
         public int DeleteStorage(int id)
         {
-            using var context = new StorageContext(_connect);
-            var storage = context.Storages.FirstOrDefault(x => x.Id == id);
+            var storage = _storageContext.Storages.FirstOrDefault(x => x.Id == id);
             if (storage is null) return -1;
-            context.Storages.Remove(storage);
-            context.SaveChanges();
+            _storageContext.Storages.Remove(storage);
+            _storageContext.SaveChanges();
             _cache.Remove("storages");
             return id;
         }

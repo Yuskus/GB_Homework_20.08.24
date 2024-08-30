@@ -7,11 +7,11 @@ using System.Text;
 
 namespace HomeworkGB10.Repo
 {
-    public class CategoryRepository(IMapper mapper, IMemoryCache cache, IConfigurationRoot root) : ICategoryRepository
+    public class CategoryRepository(IMapper mapper, IMemoryCache cache, IStorageDbContext storageContext) : ICategoryRepository
     {
         private readonly IMapper _mapper = mapper;
         private readonly IMemoryCache _cache = cache;
-        private readonly string _connect = root.GetConnectionString("StoreDb")!;
+        private readonly IStorageDbContext _storageContext = storageContext;
 
         public List<GetCategoryDTO> GetCategories()
         {
@@ -19,8 +19,7 @@ namespace HomeworkGB10.Repo
             {
                 if (categories != null) return categories;
             }
-            using var context = new StorageContext(_connect);
-            var result = context.Categories.Select(x => _mapper.Map<GetCategoryDTO>(x)).ToList();
+            var result = _storageContext.Categories.Select(x => _mapper.Map<GetCategoryDTO>(x)).ToList();
             _cache.Set("categories", result, TimeSpan.FromMinutes(30));
             return result;
         }
@@ -70,34 +69,31 @@ namespace HomeworkGB10.Repo
 
         public int AddCategory(PutCategoryDTO categoryDTO)
         {
-            using var context = new StorageContext(_connect);
-            var category = context.Categories.FirstOrDefault(x => x.Name == categoryDTO.Name);
+            var category = _storageContext.Categories.FirstOrDefault(x => x.Name == categoryDTO.Name);
             if (category is null)
             {
                 category = _mapper.Map<Category>(categoryDTO);
-                context.Categories.Add(category);
-                context.SaveChanges();
+                _storageContext.Categories.Add(category);
+                _storageContext.SaveChanges();
                 _cache.Remove("categories");
             }
             return category.Id;
         }
         public int UpdateCategory(int id, string name)
         {
-            using var context = new StorageContext(_connect);
-            var category = context.Categories.FirstOrDefault(x => x.Id == id);
+            var category = _storageContext.Categories.FirstOrDefault(x => x.Id == id);
             if (category is null) return -1;
             category.Name = name;
-            context.SaveChanges();
+            _storageContext.SaveChanges();
             _cache.Remove("categories");
             return category.Id;
         }
         public int DeleteCategory(int id)
         {
-            using var context = new StorageContext(_connect);
-            var category = context.Categories.FirstOrDefault(x => x.Id == id);
+            var category = _storageContext.Categories.FirstOrDefault(x => x.Id == id);
             if (category is null) return -1;
-            context.Categories.Remove(category);
-            context.SaveChanges();
+            _storageContext.Categories.Remove(category);
+            _storageContext.SaveChanges();
             _cache.Remove("categories");
             return id;
         }

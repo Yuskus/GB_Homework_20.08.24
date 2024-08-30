@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HomeworkGB10.Migrations
 {
-    [DbContext(typeof(StorageContext))]
+    [DbContext(typeof(StorageDbContext))]
     [Migration("20240822211643_ConnectionStringInConfig")]
     partial class ConnectionStringInConfig
     {
