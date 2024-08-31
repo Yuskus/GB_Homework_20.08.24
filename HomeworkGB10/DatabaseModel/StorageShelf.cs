@@ -1,6 +1,6 @@
 ﻿namespace HomeworkGB10.Models
 {
-    public class Storage
+    public class StorageShelf
     {
         public int Id { get; set; }
         public int ProductId { get; set; }

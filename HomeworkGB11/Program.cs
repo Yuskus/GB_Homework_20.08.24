@@ -1,3 +1,7 @@
+using HomeworkGB11.Abstractions;
+using HomeworkGB11.DatabaseModel;
+using HomeworkGB11.Queries;
+using HomeworkGB11.Repo;
 
 namespace HomeworkGB11
 {
@@ -10,9 +14,15 @@ namespace HomeworkGB11
             // Add services to the container.
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddAutoMapper(typeof(MappingProfile)); //?????????????
+
+            string connectionString = builder.Configuration.GetConnectionString("EmployeesDb")!;
+            builder.Services.AddScoped<IEmployeesDbContext, EmployeesDbContext>(x => new EmployeesDbContext(connectionString));
+
+            builder.Services.AddGraphQLServer().AddQueryType<Query>();
 
             var app = builder.Build();
 
@@ -23,10 +33,11 @@ namespace HomeworkGB11
                 app.UseSwaggerUI();
             }
 
+            app.MapGraphQL();
+
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

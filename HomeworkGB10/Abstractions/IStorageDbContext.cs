@@ -7,7 +7,7 @@ namespace HomeworkGB10.Abstractions
     {
         DbSet<Product> Products { get; set; }
         DbSet<Category> Categories { get; set; }
-        DbSet<Storage> Storages { get; set; }
+        DbSet<StorageShelf> Storages { get; set; }
         int SaveChanges();
     }
 }

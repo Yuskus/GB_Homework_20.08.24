@@ -1,0 +1,81 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 12345
+        }
+      ],
+      "UpstreamPathTemplate": "",
+      "UpstreamHttpMethod": [],
+      "SwaggerKey": "first"
+    },
+    {
+      "DownstreamPathTemplate": "",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 12345
+        }
+      ],
+      "UpstreamPathTemplate": "",
+      "UpstreamHttpMethod": [],
+      "SwaggerKey": "second"
+    },
+    {
+      "DownstreamPathTemplate": "",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 12345
+        }
+      ],
+      "UpstreamPathTemplate": "",
+      "UpstreamHttpMethod": [],
+      "SwaggerKey": "third"
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:12345"
+  },
+  "SwaggerEndPoints": [
+    {
+      "Key": "first",
+      "TransformByOcelotConfig": false,
+      "Config": [
+        {
+          "Name": "",
+          "Version": "0.1",
+          "Url": "https://localhost:12345"
+        }
+      ]
+    },
+    {
+      "Key": "second",
+      "TransformByOcelotConfig": false,
+      "Config": [
+        {
+          "Name": "",
+          "Version": "0.1",
+          "Url": "https://localhost:12345"
+        }
+      ]
+    },
+    {
+      "Key": "third",
+      "TransformByOcelotConfig": false,
+      "Config": [
+        {
+          "Name": "",
+          "Version": "0.1",
+          "Url": "https://localhost:12345"
+        }
+      ]
+    }
+  ]
+}

@@ -9,7 +9,7 @@ namespace HomeworkGB10.Models
         private readonly string _connectionString = connectionString;
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
-        public virtual DbSet<Storage> Storages { get; set; }
+        public virtual DbSet<StorageShelf> Storages { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -72,7 +72,7 @@ namespace HomeworkGB10.Repo
             var storage = _storageContext.Storages.FirstOrDefault(x => x.ProductId == storageDTO.ProductId);
             if (storage is null)
             {
-                storage = _mapper.Map<Storage>(storageDTO);
+                storage = _mapper.Map<StorageShelf>(storageDTO);
                 _storageContext.Storages.Add(storage);
                 _storageContext.SaveChanges();
                 _cache.Remove("storages");
@@ -85,7 +85,7 @@ namespace HomeworkGB10.Repo
             var storage = _storageContext.Storages.FirstOrDefault(x => x.ProductId == storageDTO.ProductId);
             if (storage is null)
             {
-                storage = _mapper.Map<Storage>(storageDTO);
+                storage = _mapper.Map<StorageShelf>(storageDTO);
                 _storageContext.Storages.Add(storage);
             }
             else

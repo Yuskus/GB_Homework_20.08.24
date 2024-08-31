@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace HomeworkGB10.Models.EntityTypeConfigurations
 {
-    public class StorageConfiguration : IEntityTypeConfiguration<Storage>
+    public class StorageConfiguration : IEntityTypeConfiguration<StorageShelf>
     {
-        public void Configure(EntityTypeBuilder<Storage> builder)
+        public void Configure(EntityTypeBuilder<StorageShelf> builder)
         {
             builder.HasKey(p => p.Id)
                       .HasName("id_storage_pk");
