@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace HomeworkGB10.Models.EntityTypeConfigurations
+namespace HomeworkGB10.DatabaseModel.EntityTypeConfigurations
 {
     public class CategoryConfiguration : IEntityTypeConfiguration<Category>
     {

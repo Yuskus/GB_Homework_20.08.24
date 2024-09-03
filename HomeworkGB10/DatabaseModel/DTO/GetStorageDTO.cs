@@ -1,4 +1,4 @@
-﻿namespace HomeworkGB10.Models.DTO
+﻿namespace HomeworkGB10.DatabaseModel.DTO
 {
     public class GetStorageDTO
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace HomeworkGB10.Models.EntityTypeConfigurations
+namespace HomeworkGB10.DatabaseModel.EntityTypeConfigurations
 {
     public class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
@@ -15,32 +15,33 @@ namespace HomeworkGB10.Models.EntityTypeConfigurations
             builder.Property(p => p.Id).HasColumnName("id");
 
             builder.HasIndex(p => p.Name)
-                  .IsUnique();
+                   .IsUnique();
 
             builder.Property(p => p.Name)
-                  .IsRequired()
-                  .HasMaxLength(255)
-                  .HasColumnName("name");
+                   .IsRequired()
+                   .HasMaxLength(255)
+                   .HasColumnName("name");
 
             builder.Property(p => p.Description)
-                  .HasColumnName("description");
+                   .HasColumnName("description");
 
             builder.Property(p => p.Price)
-                  .HasColumnType("decimal(10, 2)")
-                  .HasColumnName("price");
+                   .IsRequired()
+                   .HasColumnType("decimal(10, 2)")
+                   .HasColumnName("price");
 
             builder.Property(p => p.CategoryId)
-                  .HasColumnName("category_id");
+                   .HasColumnName("category_id");
 
             builder.HasOne(p => p.Category)
-                  .WithMany(p => p.Products)
-                  .HasForeignKey(p => p.CategoryId)
-                  .HasConstraintName("category_id_fk");
+                   .WithMany(p => p.Products)
+                   .HasForeignKey(p => p.CategoryId)
+                   .HasConstraintName("category_id_fk");
 
             builder.HasMany(p => p.Storages)
-                  .WithOne(p => p.Product)
-                  .HasForeignKey(p => p.ProductId)
-                  .HasConstraintName("storages_fk");
+                   .WithOne(p => p.Product)
+                   .HasForeignKey(p => p.ProductId)
+                   .HasConstraintName("storages_fk");
         }
     }
 }

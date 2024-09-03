@@ -1,8 +1,8 @@
 ﻿using HomeworkGB10.Abstractions;
-using HomeworkGB10.Models.EntityTypeConfigurations;
+using HomeworkGB10.DatabaseModel.EntityTypeConfigurations;
 using Microsoft.EntityFrameworkCore;
 
-namespace HomeworkGB10.Models
+namespace HomeworkGB10.DatabaseModel
 {
     public class StorageDbContext(string connectionString) : DbContext, IStorageDbContext
     {

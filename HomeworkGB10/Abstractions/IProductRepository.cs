@@ -1,4 +1,4 @@
-﻿using HomeworkGB10.Models.DTO;
+﻿using HomeworkGB10.DatabaseModel.DTO;
 
 namespace HomeworkGB10.Abstractions
 {

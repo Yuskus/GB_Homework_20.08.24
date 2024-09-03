@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using HomeworkGB10.Abstractions;
-using HomeworkGB10.Models;
-using HomeworkGB10.Models.DTO;
+using HomeworkGB10.DatabaseModel;
+using HomeworkGB10.DatabaseModel.DTO;
 using Microsoft.Extensions.Caching.Memory;
 using System.Text;
 

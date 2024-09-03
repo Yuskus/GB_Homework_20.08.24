@@ -1,5 +1,5 @@
 ﻿using HomeworkGB10.Abstractions;
-using HomeworkGB10.Models.DTO;
+using HomeworkGB10.DatabaseModel.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System.Text;
@@ -8,9 +8,9 @@ namespace HomeworkGB10.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class StorageController(IStorageRepository storageRepository) : ControllerBase
+    public class StorageShelfController(IStorageShelfRepository storageRepository) : ControllerBase
     {
-        private readonly IStorageRepository _storageRepository = storageRepository;
+        private readonly IStorageShelfRepository _storageRepository = storageRepository;
 
         [HttpGet(template: "get_storages")] 
         public ActionResult<List<GetStorageDTO>> GetStorages()

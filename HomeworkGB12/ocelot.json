@@ -1,79 +1,79 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "",
-      "DownstreamScheme": "https",
+      "DownstreamPathTemplate": "/category/{method}",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12345
+          "Port": 5287
         }
       ],
-      "UpstreamPathTemplate": "",
-      "UpstreamHttpMethod": [],
-      "SwaggerKey": "first"
+      "UpstreamPathTemplate": "/category/{method}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Patch", "Delete" ],
+      "SwaggerKey": "category"
     },
     {
-      "DownstreamPathTemplate": "",
-      "DownstreamScheme": "https",
+      "DownstreamPathTemplate": "/product/{method}",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12345
+          "Port": 5287
         }
       ],
-      "UpstreamPathTemplate": "",
-      "UpstreamHttpMethod": [],
-      "SwaggerKey": "second"
+      "UpstreamPathTemplate": "/product/{method}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete" ],
+      "SwaggerKey": "product"
     },
     {
-      "DownstreamPathTemplate": "",
-      "DownstreamScheme": "https",
+      "DownstreamPathTemplate": "/storageshelf/{method}",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12345
+          "Port": 5287
         }
       ],
-      "UpstreamPathTemplate": "",
-      "UpstreamHttpMethod": [],
-      "SwaggerKey": "third"
+      "UpstreamPathTemplate": "/storageshelf/{method}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete" ],
+      "SwaggerKey": "storageshelf"
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:12345"
+    "BaseUrl": "http://localhost:5031"
   },
   "SwaggerEndPoints": [
     {
-      "Key": "first",
+      "Key": "category",
       "TransformByOcelotConfig": false,
       "Config": [
         {
-          "Name": "",
-          "Version": "0.1",
-          "Url": "https://localhost:12345"
+          "Name": "Storage API, Category",
+          "Version": "1v",
+          "Url": "http://localhost:5287/category/swagger/v1/swagger.json"
         }
       ]
     },
     {
-      "Key": "second",
+      "Key": "product",
       "TransformByOcelotConfig": false,
       "Config": [
         {
-          "Name": "",
-          "Version": "0.1",
-          "Url": "https://localhost:12345"
+          "Name": "Storage API, Product",
+          "Version": "1v",
+          "Url": "http://localhost:5287/product/swagger/v1/swagger.json"
         }
       ]
     },
     {
-      "Key": "third",
+      "Key": "storageshelf",
       "TransformByOcelotConfig": false,
       "Config": [
         {
-          "Name": "",
-          "Version": "0.1",
-          "Url": "https://localhost:12345"
+          "Name": "Storage API, Storage Shelf",
+          "Version": "1v",
+          "Url": "http://localhost:5287/storageshelf/swagger/v1/swagger.json"
         }
       ]
     }

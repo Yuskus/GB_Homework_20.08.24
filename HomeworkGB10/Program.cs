@@ -1,7 +1,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using HomeworkGB10.Abstractions;
-using HomeworkGB10.Models;
+using HomeworkGB10.DatabaseModel;
 using HomeworkGB10.Repo;
 using Microsoft.Extensions.FileProviders;
 
@@ -61,8 +61,8 @@ namespace HomeworkGB10
                 containerBuilder.RegisterType<CategoryRepository>()
                                 .As<ICategoryRepository>()
                                 .SingleInstance();
-                containerBuilder.RegisterType<StorageRepository>()
-                                .As<IStorageRepository>()
+                containerBuilder.RegisterType<StorageShelfRepository>()
+                                .As<IStorageShelfRepository>()
                                 .SingleInstance();
             });
 

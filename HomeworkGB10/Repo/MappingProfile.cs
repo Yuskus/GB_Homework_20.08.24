@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using HomeworkGB10.Models;
-using HomeworkGB10.Models.DTO;
+using HomeworkGB10.DatabaseModel;
+using HomeworkGB10.DatabaseModel.DTO;
 
 namespace HomeworkGB10.Repo
 {

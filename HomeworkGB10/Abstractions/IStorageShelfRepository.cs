@@ -1,8 +1,8 @@
-﻿using HomeworkGB10.Models.DTO;
+﻿using HomeworkGB10.DatabaseModel.DTO;
 
 namespace HomeworkGB10.Abstractions
 {
-    public interface IStorageRepository : IRepository
+    public interface IStorageShelfRepository : IRepository
     {
         public List<GetStorageDTO> GetStorages();
         public string GetStoragesCsv();

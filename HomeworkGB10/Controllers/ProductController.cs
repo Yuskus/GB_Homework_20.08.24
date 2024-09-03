@@ -1,5 +1,5 @@
 using HomeworkGB10.Abstractions;
-using HomeworkGB10.Models.DTO;
+using HomeworkGB10.DatabaseModel.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System.Text;

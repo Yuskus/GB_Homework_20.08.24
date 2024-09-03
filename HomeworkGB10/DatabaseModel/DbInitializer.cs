@@ -1,4 +1,4 @@
-﻿namespace HomeworkGB10.Models
+﻿namespace HomeworkGB10.DatabaseModel
 {
     public class DbInitializer
     {

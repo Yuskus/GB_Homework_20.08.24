@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using HomeworkGB10.Abstractions;
-using HomeworkGB10.Models;
-using HomeworkGB10.Models.DTO;
+using HomeworkGB10.DatabaseModel;
+using HomeworkGB10.DatabaseModel.DTO;
 using Microsoft.Extensions.Caching.Memory;
 using System.Text;
 
 namespace HomeworkGB10.Repo
 {
-    public class StorageRepository(IMapper mapper, IMemoryCache cache, IStorageDbContext storageContext) : IStorageRepository
+    public class StorageShelfRepository(IMapper mapper, IMemoryCache cache, IStorageDbContext storageContext) : IStorageShelfRepository
     {
         private readonly IMapper _mapper = mapper;
         private readonly IMemoryCache _cache = cache;

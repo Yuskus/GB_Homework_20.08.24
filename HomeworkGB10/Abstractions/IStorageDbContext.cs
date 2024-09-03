@@ -1,4 +1,4 @@
-﻿using HomeworkGB10.Models;
+﻿using HomeworkGB10.DatabaseModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace HomeworkGB10.Abstractions
