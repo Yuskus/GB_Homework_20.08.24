@@ -12,12 +12,10 @@ namespace HomeworkGB12
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            var configuration = new ConfigurationBuilder()
-                                .AddJsonFile("ocelot.json")
-                                .Build();
+            builder.Configuration.AddJsonFile("ocelot.json", false, true);
 
-            builder.Services.AddOcelot(configuration);
-            builder.Services.AddSwaggerForOcelot(configuration);
+            builder.Services.AddOcelot(builder.Configuration);
+            builder.Services.AddSwaggerForOcelot(builder.Configuration);
 
             var app = builder.Build();
 

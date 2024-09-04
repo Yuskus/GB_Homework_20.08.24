@@ -4,6 +4,7 @@ using HomeworkGB11.Queries;
 using HomeworkGB11.Mapper;
 using HomeworkGB11.Services;
 using HomeworkGB11.Mutations;
+using Microsoft.EntityFrameworkCore;
 
 namespace HomeworkGB11
 {
@@ -20,6 +21,8 @@ namespace HomeworkGB11
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
             string connectionString = builder.Configuration.GetConnectionString("EmployeesDb")!;
+
+            builder.Services.AddScoped(x => new EmployeesDbContext(connectionString));
             builder.Services.AddScoped<IEmployeesDbContext, EmployeesDbContext>(x => new EmployeesDbContext(connectionString));
 
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();

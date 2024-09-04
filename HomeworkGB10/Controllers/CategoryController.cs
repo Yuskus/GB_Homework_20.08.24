@@ -12,7 +12,7 @@ namespace HomeworkGB10.Controllers
     {
         private readonly ICategoryRepository _categoryRepository = categoryRepository;
 
-        [HttpGet(template: "get_categories")]
+        [HttpGet(template: "get")]
         public ActionResult<List<GetCategoryDTO>> GetCategories()
         {
             try
@@ -26,7 +26,7 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpGet(template: "get_categories_csv")]
+        [HttpGet(template: "get_as_csv")]
         public ActionResult GetCategoriesCsv()
         {
             try
@@ -40,7 +40,7 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpGet(template: "get_categories_csv_url")]
+        [HttpGet(template: "get_as_url")]
         public ActionResult<string> GetCategoriesCsvUrl()
         {
             try
@@ -55,13 +55,13 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpGet(template: "get_cache_statistics")]
+        [HttpGet(template: "get_cache_stats")]
         public ActionResult<MemoryCacheStatistics?> GetCacheStatistics()
         {
             return _categoryRepository.GetCacheStatistics();
         }
 
-        [HttpGet(template: "get_cache_statistics_url")]
+        [HttpGet(template: "get_cache_stats_as_url")]
         public ActionResult<string> GetCacheStatisticsUrl()
         {
             string fileName = _categoryRepository.GetCacheStatisticsCsvUrl();
@@ -69,7 +69,7 @@ namespace HomeworkGB10.Controllers
             return $"{Request.Scheme}://{Request.Host}/static/{fileName}";
         }
 
-        [HttpPost(template: "post_category")]
+        [HttpPost(template: "post")]
         public ActionResult<int> AddCategory([FromBody] PutCategoryDTO categoryDTO)
         {
             try
@@ -82,7 +82,7 @@ namespace HomeworkGB10.Controllers
                 return StatusCode(500);
             }
         }
-        [HttpPatch(template: "put_category/{id}")]
+        [HttpPatch(template: "patch/{id}")]
         public ActionResult<int> UpdateCategory(int id, string name)
         {
             try
@@ -97,7 +97,7 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpDelete(template: "delete_category/{id}")]
+        [HttpDelete(template: "delete/{id}")]
         public ActionResult<int> DeleteCategory(int id)
         {
             try

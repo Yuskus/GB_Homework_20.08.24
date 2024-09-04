@@ -12,7 +12,7 @@ namespace HomeworkGB10.Controllers
     {
         private readonly IProductRepository _productRepository = productRepository;
 
-        [HttpGet(template: "get_products")]
+        [HttpGet(template: "get")]
         public ActionResult<List<GetProductDTO>> GetProducts()
         {
             try
@@ -26,7 +26,7 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpGet(template: "get_products_csv")]
+        [HttpGet(template: "get_as_csv")]
         public ActionResult GetProductsCsv()
         {
             try
@@ -40,7 +40,7 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpGet(template: "get_products_csv_url")]
+        [HttpGet(template: "get_as_url")]
         public ActionResult<string> GetProductsCsvUrl()
         {
             try
@@ -55,13 +55,13 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpGet(template: "get_cache_statistics")]
+        [HttpGet(template: "get_cache_stats")]
         public ActionResult<MemoryCacheStatistics?> GetCacheStatistics()
         {
             return _productRepository.GetCacheStatistics();
         }
 
-        [HttpGet(template: "get_cache_statistics_url")]
+        [HttpGet(template: "get_cache_stats_as_url")]
         public ActionResult<string> GetCacheStatisticsUrl()
         {
             string fileName = _productRepository.GetCacheStatisticsCsvUrl();
@@ -69,7 +69,7 @@ namespace HomeworkGB10.Controllers
             return $"{Request.Scheme}://{Request.Host}/static/{fileName}";
         }
 
-        [HttpPost(template: "post_product")]
+        [HttpPost(template: "post")]
         public ActionResult<int> AddProduct([FromBody] PutProductDTO productDTO)
         {
             try
@@ -83,7 +83,7 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpPut(template: "put_product")]
+        [HttpPut(template: "put")]
         public ActionResult<int> PutProduct([FromBody] PutProductDTO productDTO)
         {
             try
@@ -97,7 +97,7 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpPatch(template: "patch_product/{id}")]
+        [HttpPatch(template: "patch/{id}")]
         public ActionResult<int> UpdatePriceOfProduct(int id, double price)
         {
             try
@@ -112,7 +112,7 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpDelete(template: "delete_product/{id}")]
+        [HttpDelete(template: "delete/{id}")]
         public ActionResult<int> DeleteProduct(int id)
         {
             try

@@ -4,12 +4,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HomeworkGB11.DatabaseModel
 {
-    public class EmployeesDbContext(string connectionString) : DbContext, IEmployeesDbContext
+    public class EmployeesDbContext : DbContext, IEmployeesDbContext
     {
-        private readonly string _connectionString = connectionString;
+        private readonly string? _connectionString;
         public virtual DbSet<EmployeeInfo> Employees { get; set; }
         public virtual DbSet<EmployeePosition> EmployeesPosition { get; set; }
         public virtual DbSet<WorkZone> WorkZones { get; set; }
+        public EmployeesDbContext(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+        public EmployeesDbContext(DbContextOptions<EmployeesDbContext> options) : base(options)
+        {
+
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseLazyLoadingProxies().UseNpgsql(_connectionString);

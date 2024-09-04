@@ -3,6 +3,7 @@ using Autofac.Extensions.DependencyInjection;
 using HomeworkGB10.Abstractions;
 using HomeworkGB10.DatabaseModel;
 using HomeworkGB10.Repo;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
 namespace HomeworkGB10
@@ -49,21 +50,25 @@ namespace HomeworkGB10
 
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
+            string connectionString = configuration.GetConnectionString("StoreDb")!;
+
             builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
             {
-                containerBuilder.RegisterInstance(configuration);
-                containerBuilder.Register(x => new StorageDbContext(configuration.GetConnectionString("StoreDb")!))
+                containerBuilder.Register(x => new StorageDbContext(connectionString))
+                                .AsSelf()
+                                .InstancePerLifetimeScope();
+                containerBuilder.Register(x => new StorageDbContext(connectionString))
                                 .As<IStorageDbContext>()
-                                .InstancePerDependency();
+                                .InstancePerLifetimeScope();
                 containerBuilder.RegisterType<ProductRepository>()
                                 .As<IProductRepository>()
-                                .SingleInstance();
+                                .InstancePerLifetimeScope();
                 containerBuilder.RegisterType<CategoryRepository>()
                                 .As<ICategoryRepository>()
-                                .SingleInstance();
+                                .InstancePerLifetimeScope();
                 containerBuilder.RegisterType<StorageShelfRepository>()
                                 .As<IStorageShelfRepository>()
-                                .SingleInstance();
+                                .InstancePerLifetimeScope();
             });
 
             builder.Services.AddMemoryCache(x => x.TrackStatistics = true);

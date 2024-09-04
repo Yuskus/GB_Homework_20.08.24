@@ -6,7 +6,7 @@ namespace HomeworkGB10.DatabaseModel
 {
     public class StorageDbContext(string connectionString) : DbContext, IStorageDbContext
     {
-        private readonly string _connectionString = connectionString;
+        private readonly string? _connectionString = connectionString;
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<StorageShelf> Storages { get; set; }

@@ -12,7 +12,7 @@ namespace HomeworkGB10.Controllers
     {
         private readonly IStorageShelfRepository _storageRepository = storageRepository;
 
-        [HttpGet(template: "get_storages")] 
+        [HttpGet(template: "get")] 
         public ActionResult<List<GetStorageDTO>> GetStorages()
         {
             try
@@ -26,7 +26,7 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpGet(template: "get_storages_csv")] 
+        [HttpGet(template: "get_as_csv")] 
         public ActionResult GetStoragesCsv()
         {
             try
@@ -40,7 +40,7 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpGet(template: "get_storages_csv_url")]
+        [HttpGet(template: "get_as_url")]
         public ActionResult<string> GetCategoriesCsvUrl()
         {
             try
@@ -55,13 +55,13 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpGet(template: "get_cache_statistics")]
+        [HttpGet(template: "get_cache_stats")]
         public ActionResult<MemoryCacheStatistics?> GetCacheStatistics()
         {
             return _storageRepository.GetCacheStatistics();
         }
 
-        [HttpGet(template: "get_cache_statistics_url")]
+        [HttpGet(template: "get_cache_stats_as_url")]
         public ActionResult<string> GetCacheStatisticsUrl()
         {
             string fileName = _storageRepository.GetCacheStatisticsCsvUrl();
@@ -69,7 +69,7 @@ namespace HomeworkGB10.Controllers
             return $"{Request.Scheme}://{Request.Host}/static/{fileName}";
         }
 
-        [HttpPost(template: "post_storage")]
+        [HttpPost(template: "post")]
         public ActionResult<int> AddStorage([FromBody] PutStorageDTO storageDTO)
         {
             try
@@ -83,7 +83,7 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpPut(template: "put_storage")]
+        [HttpPut(template: "put")]
         public ActionResult<int> PutStorage([FromBody] PutStorageDTO storageDTO)
         {
             try
@@ -97,7 +97,7 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpPatch(template: "patch_storage/{id}")]
+        [HttpPatch(template: "patch/{id}")]
         public ActionResult<int> UpdateQuantityAtStorage(int id, int quantity)
         {
             try
@@ -112,7 +112,7 @@ namespace HomeworkGB10.Controllers
             }
         }
 
-        [HttpDelete(template: "delete_storage/{id}")]
+        [HttpDelete(template: "delete/{id}")]
         public ActionResult<int> DeleteStorage(int id)
         {
             try
