@@ -1,11 +1,11 @@
 {
   "GlobalConfiguration": {
-    "BaseUrl": "http://localhost:7038"
+    "BaseUrl": "http://localhost:7038/"
   },
   "Routes": [
     {
-      "UpstreamPathTemplate": "/gateway/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Patch", "Delete" ],
+      "UpstreamPathTemplate": "/gateway/api_storage/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete" ],
       "DownstreamPathTemplate": "/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -15,6 +15,19 @@
         }
       ],
       "SwaggerKey": "storage"
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/api_employees/{everything}",
+      "UpstreamHttpMethod": [ ],
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7209
+        }
+      ],
+      "SwaggerKey": "employees"
     }
   ],
   "SwaggerEndPoints": [
@@ -25,7 +38,18 @@
         {
           "Name": "Storage API",
           "Version": "1v",
-          "Url": "https://localhost:7023/category/swagger/v1/swagger.json"
+          "Url": "https://localhost:7023/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "employees",
+      "TransformByOcelotConfig": false,
+      "Config": [
+        {
+          "Name": "Employees API",
+          "Version": "1v",
+          "Url": "https://localhost:7209/swagger/v1/swagger.json"
         }
       ]
     }

@@ -20,6 +20,7 @@ namespace HomeworkGB12
             var app = builder.Build();
 
             app.UseSwagger();
+            app.UseDeveloperExceptionPage();
 
             app.UseSwaggerForOcelotUI(options =>
             {

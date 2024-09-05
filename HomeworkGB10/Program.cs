@@ -42,15 +42,13 @@ namespace HomeworkGB10
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            var configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.AddJsonFile("appsettings.json");
-            var configuration = configurationBuilder.Build();
+            builder.Configuration.AddJsonFile("appsettings.json");
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
-            string connectionString = configuration.GetConnectionString("StoreDb")!;
+            string connectionString = builder.Configuration.GetConnectionString("StoreDb")!;
 
             builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
             {
