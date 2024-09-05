@@ -4,9 +4,9 @@
   },
   "Routes": [
     {
-      "UpstreamPathTemplate": "/gateway/api_storage/{everything}",
+      "UpstreamPathTemplate": "/api_storage/{everything}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete" ],
-      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamPathTemplate": "/api_storage/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -17,9 +17,9 @@
       "SwaggerKey": "storage"
     },
     {
-      "UpstreamPathTemplate": "/gateway/api_employees/{everything}",
-      "UpstreamHttpMethod": [ ],
-      "DownstreamPathTemplate": "/{everything}",
+      "UpstreamPathTemplate": "/api_graphql/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "DownstreamPathTemplate": "/api_graphql/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HomeworkGB11.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api_graphql/[controller]")]
     public class PositionController(IPositionService service) : ControllerBase
     {
         private readonly IPositionService _service = service;

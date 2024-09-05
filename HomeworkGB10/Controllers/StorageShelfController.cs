@@ -7,7 +7,7 @@ using System.Text;
 namespace HomeworkGB10.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api_storage/[controller]")]
     public class StorageShelfController(IStorageShelfRepository storageRepository) : ControllerBase
     {
         private readonly IStorageShelfRepository _storageRepository = storageRepository;

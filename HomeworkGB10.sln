@@ -7,12 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeworkGB10", "HomeworkGB1
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeworkGB11", "HomeworkGB11\HomeworkGB11.csproj", "{6C366E02-D194-4AD5-A1D8-3A6092C25A50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeworkGB12", "HomeworkGB12\HomeworkGB12.csproj", "{66426F80-BC8C-40B7-A176-E13F86A45E1C}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{E36718BC-EA89-4C8A-A775-77C4BB0E2F20}"
-	ProjectSection(SolutionItems) = preProject
-		TODO.txt = TODO.txt
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeworkGB12", "HomeworkGB12\HomeworkGB12.csproj", "{66426F80-BC8C-40B7-A176-E13F86A45E1C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

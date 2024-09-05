@@ -7,7 +7,7 @@ using System.Text;
 namespace HomeworkGB10.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api_storage/[controller]")]
     public class CategoryController(ICategoryRepository categoryRepository) : ControllerBase
     {
         private readonly ICategoryRepository _categoryRepository = categoryRepository;

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HomeworkGB11.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api_graphql/[controller]")]
     public class EmployeeInfoController(IEmployeeService service) : ControllerBase
     {
         private readonly IEmployeeService _service = service;
