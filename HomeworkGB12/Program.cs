@@ -1,6 +1,7 @@
 using HomeworkGB12.Abstractions;
 using HomeworkGB12.DatabaseModel;
 using HomeworkGB12.Mapper;
+using HomeworkGB12.Repo;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Ocelot.DependencyInjection;
@@ -64,6 +65,9 @@ namespace HomeworkGB12
 
             builder.Services.AddScoped(x => new AuthenticateDbContext(connectionString));
             builder.Services.AddScoped<IAuthenticateDbContext, AuthenticateDbContext>(x => new AuthenticateDbContext(connectionString));
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+            builder.Services.AddScoped<ILoginRepository, LoginRepository>();
 
             builder.Configuration.AddJsonFile("ocelot.json", false, true);
 
