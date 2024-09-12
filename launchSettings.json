@@ -1,0 +1,19 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "homeworkgb12",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
+      "serviceActions": {
+        "homeworkgb10": "StartDebugging",
+        "homeworkgb11": "StartDebugging",
+        "homeworkgb12": "StartDebugging",
+        "db10": "StartWithoutDebugging",
+        "db11": "StartWithoutDebugging",
+        "db12": "StartWithoutDebugging"
+      }
+    }
+  }
+}

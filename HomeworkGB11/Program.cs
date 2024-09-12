@@ -5,7 +5,7 @@ using HomeworkGB11.Mapper;
 using HomeworkGB11.Services;
 using HomeworkGB11.Mutations;
 using Microsoft.EntityFrameworkCore;
-using System;
+using Microsoft.OpenApi.Models;
 
 namespace HomeworkGB11
 {
@@ -18,7 +18,9 @@ namespace HomeworkGB11
             builder.Services.AddControllers();
 
             builder.Services.AddEndpointsApiExplorer();
+
             builder.Services.AddSwaggerGen();
+
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
             string connectionString = builder.Configuration.GetConnectionString("EmployeesDb")!;
@@ -45,7 +47,7 @@ namespace HomeworkGB11
 
             app.MapGraphQL();
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseAuthorization();
 

@@ -17,10 +17,13 @@ namespace HomeworkGB12
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddControllers();
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));
             builder.Services.AddSwaggerGen(opt =>
             {
+                opt.SwaggerDoc("api_auth", new OpenApiInfo { Title = "API Authenticate", Version = "v1" });
+
                 opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -77,17 +80,21 @@ namespace HomeworkGB12
             var app = builder.Build();
 
             app.UseSwagger();
+
             app.UseDeveloperExceptionPage();
 
-            app.UseSwaggerForOcelotUI(options =>
+            app.UseSwaggerForOcelotUI().UseOcelot().Wait();
+            /*options =>
             {
                 options.PathToSwaggerGenerator = "/swagger/docs";
-            }).UseOcelot().Wait();
+            }*/
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.MapControllers();
 
             app.Run();
         }

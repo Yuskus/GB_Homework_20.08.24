@@ -1,55 +1,79 @@
 {
   "GlobalConfiguration": {
-    "BaseUrl": "http://localhost:7038/"
+    "BaseUrl": "http://localhost:9000/" //7038
   },
   "Routes": [
     {
       "UpstreamPathTemplate": "/api_storage/{everything}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete" ],
       "DownstreamPathTemplate": "/api_storage/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7023
+          "Port": 7000
         }
       ],
-      "SwaggerKey": "storage"
+      "SwaggerKey": "api_storage"
     },
     {
       "UpstreamPathTemplate": "/api_graphql/{everything}",
       "UpstreamHttpMethod": [ "Get", "Post" ],
       "DownstreamPathTemplate": "/api_graphql/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7209
+          "Port": 8000
         }
       ],
-      "SwaggerKey": "employees"
+      "SwaggerKey": "api_graphql"
+    },
+    {
+      "UpstreamPathTemplate": "/api_auth/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "DownstreamPathTemplate": "/api_auth/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 9000
+        }
+      ],
+      "SwaggerKey": "api_auth"
     }
   ],
   "SwaggerEndPoints": [
     {
-      "Key": "storage",
-      "TransformByOcelotConfig": false,
+      "Key": "api_storage",
+      "TransformByOcelotConfig": true, //false был
       "Config": [
         {
           "Name": "Storage API",
-          "Version": "1v",
-          "Url": "https://localhost:7023/swagger/v1/swagger.json"
+          "Version": "v1",
+          "Url": "http://localhost:7000/swagger/v1/swagger.json"
         }
       ]
     },
     {
-      "Key": "employees",
-      "TransformByOcelotConfig": false,
+      "Key": "api_graphql",
+      "TransformByOcelotConfig": true,
       "Config": [
         {
           "Name": "Employees API",
-          "Version": "1v",
-          "Url": "https://localhost:7209/swagger/v1/swagger.json"
+          "Version": "v1",
+          "Url": "http://localhost:8000/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "api_auth",
+      "TransformByOcelotConfig": true,
+      "Config": [
+        {
+          "Name": "Authenticate API",
+          "Version": "v1",
+          "Url": "http://localhost:9000/swagger/v1/swagger.json"
         }
       ]
     }

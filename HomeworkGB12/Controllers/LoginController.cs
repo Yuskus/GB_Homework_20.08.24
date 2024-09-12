@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HomeworkGB12.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api_auth/[controller]")]
     public class LoginController(ILoginRepository userRepository) : ControllerBase
     {
         private readonly ILoginRepository _userRepository = userRepository;

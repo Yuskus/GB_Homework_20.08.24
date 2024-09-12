@@ -1,0 +1,91 @@
+version: '3.4'
+
+services:
+  homeworkgb10:
+    container_name: homeworkgb10
+    build:
+      context: .
+      dockerfile: HomeworkGB10/Dockerfile
+    depends_on:
+      - db10
+    ports:
+    - 7000:8080
+    networks:
+    - mynetwork
+
+  homeworkgb11:
+    container_name: homeworkgb11
+    build:
+      context: .
+      dockerfile: HomeworkGB11/Dockerfile
+    depends_on:
+      - db11
+    ports:
+    - 8000:8080
+    networks:
+    - mynetwork
+
+  homeworkgb12:
+    container_name: homeworkgb12
+    build:
+      context: .
+      dockerfile: HomeworkGB12/Dockerfile
+    depends_on:
+      - db12
+      - homeworkgb10
+      - homeworkgb11
+    ports:
+    - 9000:8080
+    networks:
+    - mynetwork
+  
+  db10:
+    image: postgres:16.4-alpine3.20
+    container_name: db10
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "22011995"
+      POSTGRES_DB: StorageDb
+    volumes:
+    - database10:/var/lib/postgresql/db10/data
+    ports:
+    - 5430:5432
+    networks:
+    - mynetwork
+
+  db11:
+    image: postgres:16.4-alpine3.20
+    container_name: db11
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "22011995"
+      POSTGRES_DB: EmployeesDb
+    volumes:
+    - database11:/var/lib/postgresql/db11/data
+    ports:
+    - 5431:5432
+    networks:
+    - mynetwork
+
+  db12:
+    image: postgres:16.4-alpine3.20
+    container_name: db12
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "22011995"
+      POSTGRES_DB: AuthenticateDb
+    volumes:
+    - database12:/var/lib/postgresql/db12/data
+    ports:
+    - 5432:5432
+    networks:
+    - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  database10:
+  database11:
+  database12:

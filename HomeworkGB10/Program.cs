@@ -5,6 +5,7 @@ using HomeworkGB10.DatabaseModel;
 using HomeworkGB10.Repo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.OpenApi.Models;
 
 namespace HomeworkGB10
 {
@@ -29,7 +30,7 @@ namespace HomeworkGB10
                 RequestPath = "/static"
             });
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseAuthorization();
 

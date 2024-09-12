@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HomeworkGB12.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api_auth/[controller]")]
     public class RoleController(IRoleRepository roleRepository) : ControllerBase
     {
         private readonly IRoleRepository _roleRepository = roleRepository;
