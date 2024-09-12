@@ -16,13 +16,11 @@ namespace HomeworkGB12
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddControllers();
-
-            builder.Services.AddAutoMapper(typeof(MappingProfile));
+            builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(opt =>
             {
-                opt.SwaggerDoc("api_auth", new OpenApiInfo { Title = "API Authenticate", Version = "v1" });
+                //opt.SwaggerDoc("api_auth", new OpenApiInfo { Title = "API Authenticate", Version = "v1" });
 
                 opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -48,7 +46,12 @@ namespace HomeworkGB12
                         new List<string>()
                     }
                 });
-            });
+            }); 
+            
+            builder.Configuration.AddJsonFile("ocelot.json", false, true);
+
+            builder.Services.AddOcelot(builder.Configuration);
+            builder.Services.AddSwaggerForOcelot(builder.Configuration, opt => opt.GenerateDocsForGatewayItSelf = true);
 
             builder.Services.AddAuthentication().AddJwtBearer(option =>
             {
@@ -64,6 +67,8 @@ namespace HomeworkGB12
                 };
             });
 
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
+
             string connectionString = builder.Configuration.GetConnectionString("AuthenticateDb")!;
 
             builder.Services.AddScoped(x => new AuthenticateDbContext(connectionString));
@@ -72,22 +77,19 @@ namespace HomeworkGB12
             builder.Services.AddScoped<IRoleRepository, RoleRepository>();
             builder.Services.AddScoped<ILoginRepository, LoginRepository>();
 
-            builder.Configuration.AddJsonFile("ocelot.json", false, true);
-
-            builder.Services.AddOcelot(builder.Configuration);
-            builder.Services.AddSwaggerForOcelot(builder.Configuration);
-
             var app = builder.Build();
 
-            app.UseSwagger();
+            //app.UseSwagger();
 
-            app.UseDeveloperExceptionPage();
-
-            app.UseSwaggerForOcelotUI().UseOcelot().Wait();
-            /*options =>
+            app.UseSwaggerForOcelotUI(options =>
             {
-                options.PathToSwaggerGenerator = "/swagger/docs";
-            }*/
+                options.PathToSwaggerGenerator = "/swagger/docs"; ///swagger/docs
+            }).UseOcelot().Wait();
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
 
             //app.UseHttpsRedirection();
 

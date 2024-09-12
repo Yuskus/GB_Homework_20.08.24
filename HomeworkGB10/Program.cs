@@ -5,7 +5,6 @@ using HomeworkGB10.DatabaseModel;
 using HomeworkGB10.Repo;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.OpenApi.Models;
 
 namespace HomeworkGB10
 {
@@ -15,10 +14,12 @@ namespace HomeworkGB10
         {
             var app = WebAppBuilding(args);
 
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseDeveloperExceptionPage();
             }
 
             string staticFilePath = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles");

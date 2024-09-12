@@ -5,7 +5,6 @@ using HomeworkGB11.Mapper;
 using HomeworkGB11.Services;
 using HomeworkGB11.Mutations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 
 namespace HomeworkGB11
 {
@@ -39,10 +38,12 @@ namespace HomeworkGB11
 
             var app = builder.Build();
 
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseDeveloperExceptionPage();
             }
 
             app.MapGraphQL();

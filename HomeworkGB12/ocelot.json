@@ -10,8 +10,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 7000
+          "Host": "homeworkgb10",
+          "Port": 8080
         }
       ],
       "SwaggerKey": "api_storage"
@@ -23,8 +23,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 8000
+          "Host": "homeworkgb11",
+          "Port": 8080
         }
       ],
       "SwaggerKey": "api_graphql"
@@ -36,8 +36,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 9000
+          "Host": "homeworkgb12",
+          "Port": 8080
         }
       ],
       "SwaggerKey": "api_auth"
@@ -46,34 +46,34 @@
   "SwaggerEndPoints": [
     {
       "Key": "api_storage",
-      "TransformByOcelotConfig": true, //false был
+      "TransformByOcelotConfig": false, //false был
       "Config": [
         {
           "Name": "Storage API",
           "Version": "v1",
-          "Url": "http://localhost:7000/swagger/v1/swagger.json"
+          "Url": "http://homeworkgb10:8080/swagger/v1/swagger.json"
         }
       ]
     },
     {
       "Key": "api_graphql",
-      "TransformByOcelotConfig": true,
+      "TransformByOcelotConfig": false,
       "Config": [
         {
           "Name": "Employees API",
           "Version": "v1",
-          "Url": "http://localhost:8000/swagger/v1/swagger.json"
+          "Url": "http://homeworkgb11:8080/swagger/v1/swagger.json"
         }
       ]
     },
     {
       "Key": "api_auth",
-      "TransformByOcelotConfig": true,
+      "TransformByOcelotConfig": false,
       "Config": [
         {
           "Name": "Authenticate API",
           "Version": "v1",
-          "Url": "http://localhost:9000/swagger/v1/swagger.json"
+          "Url": "http://homeworkgb12:8080/swagger/v1/swagger.json"
         }
       ]
     }
