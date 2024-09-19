@@ -2,10 +2,9 @@ using HomeworkGB12.Abstractions;
 using HomeworkGB12.DatabaseModel;
 using HomeworkGB12.Mapper;
 using HomeworkGB12.Repo;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Ocelot.DependencyInjection;
-using Ocelot.Middleware;
 using System.Text;
 
 namespace HomeworkGB12
@@ -20,8 +19,6 @@ namespace HomeworkGB12
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(opt =>
             {
-                //opt.SwaggerDoc("api_auth", new OpenApiInfo { Title = "API Authenticate", Version = "v1" });
-
                 opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -47,13 +44,9 @@ namespace HomeworkGB12
                     }
                 });
             }); 
-            
-            builder.Configuration.AddJsonFile("ocelot.json", false, true);
 
-            builder.Services.AddOcelot(builder.Configuration);
-            builder.Services.AddSwaggerForOcelot(builder.Configuration, opt => opt.GenerateDocsForGatewayItSelf = true);
-
-            builder.Services.AddAuthentication().AddJwtBearer(option =>
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                            .AddJwtBearer(option =>
             {
                 option.TokenValidationParameters = new()
                 {
@@ -66,6 +59,7 @@ namespace HomeworkGB12
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
                 };
             });
+            builder.Services.AddAuthorization();
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
@@ -79,19 +73,13 @@ namespace HomeworkGB12
 
             var app = builder.Build();
 
-            //app.UseSwagger();
-
-            app.UseSwaggerForOcelotUI(options =>
-            {
-                options.PathToSwaggerGenerator = "/swagger/docs"; ///swagger/docs
-            }).UseOcelot().Wait();
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             if (app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            //app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseAuthorization();

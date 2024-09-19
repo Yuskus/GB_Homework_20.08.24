@@ -12,7 +12,7 @@ namespace HomeworkGB12.Controllers
 
         [HttpPost("add_role")]
         [Authorize(Roles = "Administrator")]
-        public ActionResult AddRole([FromBody] string role)
+        public ActionResult<int> AddRole([FromBody] string role)
         {
             try
             {
@@ -25,9 +25,9 @@ namespace HomeworkGB12.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("check_user")]
         [Authorize(Roles = "Administrator")]
-        public ActionResult CheckForAdmin()
+        public ActionResult<string> CheckForAdmin()
         {
             try
             {
@@ -40,9 +40,9 @@ namespace HomeworkGB12.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("check_admin")]
         [Authorize(Roles = "Administrator, User")]
-        public ActionResult CheckForUser()
+        public ActionResult<string> CheckForUser()
         {
             try
             {

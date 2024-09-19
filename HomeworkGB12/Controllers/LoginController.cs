@@ -13,7 +13,7 @@ namespace HomeworkGB12.Controllers
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public ActionResult Login([FromBody] LoginFormDTO loginForm)
+        public ActionResult<string> Login([FromBody] LoginFormDTO loginForm)
         {
             try
             {

@@ -1,6 +1,6 @@
 {
   "GlobalConfiguration": {
-    "BaseUrl": "http://localhost:9000/" //7038
+    "BaseUrl": "http://localhost:10000/"
   },
   "Routes": [
     {
@@ -46,7 +46,7 @@
   "SwaggerEndPoints": [
     {
       "Key": "api_storage",
-      "TransformByOcelotConfig": false, //false Р±С‹Р»
+      "TransformByOcelotConfig": false, //false был
       "Config": [
         {
           "Name": "Storage API",
